@@ -30,16 +30,16 @@ class TextMarquee extends StatefulWidget {
   final bool rtl;
 
   /// Create TextMarquee
-  const TextMarquee(this.text, {
-    Key? key,
-    this.style = const TextStyle(),
-    this.duration,
-    this.curve = Curves.linear,
-    this.delay = const Duration(seconds: 2),
-    this.spaceSize = 32,
-    this.startPaddingSize = 0,
-    this.rtl = false
-  }) : super(key: key);
+  const TextMarquee(this.text,
+      {Key? key,
+      this.style = const TextStyle(),
+      this.duration,
+      this.curve = Curves.linear,
+      this.delay = const Duration(seconds: 2),
+      this.spaceSize = 32,
+      this.startPaddingSize = 0,
+      this.rtl = false})
+      : super(key: key);
 
   @override
   State<TextMarquee> createState() => _TextMarqueeState();
@@ -63,14 +63,16 @@ class _TextMarqueeState extends State<TextMarquee> {
     // The commands inside this callback are executed after the build function.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // If the text is not scrolling, the animation will start.
-      if (!_isScrolling) { _startAnimating(); }
+      if (!_isScrolling) {
+        _startAnimating();
+      }
     });
     super.didUpdateWidget(oldWidget);
   }
 
   Future<void> _startAnimating() async {
     // If the text is not larger than widget, Scrolling will stop.
-    if(!_isLarger) {
+    if (!_isLarger) {
       _isScrolling = false;
       return;
     }
@@ -79,14 +81,15 @@ class _TextMarqueeState extends State<TextMarquee> {
     await Future.delayed(widget.delay);
 
     // Calculate scrolling length.
-    double scrollLength = _textWidth + widget.spaceSize + widget.startPaddingSize;
+    double scrollLength =
+        _textWidth + widget.spaceSize + widget.startPaddingSize;
 
     // Scroll to the end of SingleChildScrollView.
-    await _scrollController.animateTo(
-        scrollLength,
-        duration: (widget.duration != null)? widget.duration! : Duration(milliseconds: (scrollLength * 27).toInt()),
-        curve: widget.curve
-    );
+    await _scrollController.animateTo(scrollLength,
+        duration: (widget.duration != null)
+            ? widget.duration!
+            : Duration(milliseconds: (scrollLength * 27).toInt()),
+        curve: widget.curve);
 
     // Jump to start of SingleChildScrollView. (without animation)
     _scrollController.jumpTo(0);
@@ -119,13 +122,16 @@ class _TextMarqueeState extends State<TextMarquee> {
                 children: [
                   SizedBox(width: widget.startPaddingSize),
                   Text(widget.text, style: widget.style, maxLines: 1),
-                  (_isLarger)? Padding(
-                    padding: EdgeInsets.only(left: widget.spaceSize + widget.startPaddingSize),
-                    child: Text(widget.text, style: widget.style, maxLines: 1),
-                  ) : const SizedBox()
+                  (_isLarger)
+                      ? Padding(
+                          padding: EdgeInsets.only(
+                              left: widget.spaceSize + widget.startPaddingSize),
+                          child: Text(widget.text,
+                              style: widget.style, maxLines: 1),
+                        )
+                      : const SizedBox()
                 ],
-              )
-          ),
+              )),
         );
       },
     );
@@ -133,7 +139,9 @@ class _TextMarqueeState extends State<TextMarquee> {
 
   double _getTextWidth(BuildContext context) {
     // If the text is blank, its length is zero.
-    if(widget.text.isEmpty) { return 0; }
+    if (widget.text.isEmpty) {
+      return 0;
+    }
 
     // Create textSpan from the text and its style.
     final span = TextSpan(text: widget.text, style: widget.style);
@@ -151,12 +159,10 @@ class _TextMarqueeState extends State<TextMarquee> {
     renderObject.layout(constraints);
 
     // Get text width from render object.
-    final boxes = renderObject.getBoxesForSelection(
-      TextSelection(
-        baseOffset: 0,
-        extentOffset: TextSpan(text: widget.text).toPlainText().length,
-      )
-    );
+    final boxes = renderObject.getBoxesForSelection(TextSelection(
+      baseOffset: 0,
+      extentOffset: TextSpan(text: widget.text).toPlainText().length,
+    ));
 
     // Return width of text.
     return boxes.last.right;
